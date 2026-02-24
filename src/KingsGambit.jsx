@@ -6,7 +6,7 @@ const CELL = 64;
 const BOARD_PX = CELL * BOARD_SIZE;
 
 // Use filled unicode for both, style with CSS color
-const PIECE_CHAR = { king: "♚", queen: "♛", rook: "♜", bishop: "♝", knight: "♞", pawn: "♟" };
+const PIECE_CHAR = { king: "♚\uFE0E", queen: "♛\uFE0E", rook: "♜\uFE0E", bishop: "♝\uFE0E", knight: "♞\uFE0E", pawn: "♟\uFE0E" };
 
 const LEVELS = [
   { level: 1, name: "The Queen", target: "queen", count: 1, enemyCount: 2, startBpm: 40, bpmRamp: 0.12 },
