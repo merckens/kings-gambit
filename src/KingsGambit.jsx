@@ -157,8 +157,9 @@ export default function KingsGambit() {
   const pickupSynthRef = useRef(null);
   const hitSynthRef = useRef(null);
 
-  // Init audio
-  useEffect(() => {
+  // Init audio - create synths lazily after Tone.start() for mobile compatibility
+  const initSynths = useCallback(() => {
+    if (synthRef.current) return; // already initialized
     synthRef.current = new Tone.MembraneSynth({
       pitchDecay:0.01, octaves:3, envelope:{attack:0.001,decay:0.15,sustain:0,release:0.05}
     }).toDestination();
@@ -178,7 +179,10 @@ export default function KingsGambit() {
       noise:{type:"pink"}, envelope:{attack:0.01,decay:0.2,sustain:0,release:0.1}
     }).toDestination();
     hitSynthRef.current.volume.value = -6;
+  }, []);
 
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       if (loopRef.current) { loopRef.current.stop(); loopRef.current.dispose(); }
       synthRef.current?.dispose();
@@ -383,7 +387,7 @@ export default function KingsGambit() {
   }, [advanceLevel]);
 
   const startGame = useCallback(async () => {
-    if (!toneReady) { await Tone.start(); setToneReady(true); }
+    if (!toneReady) { await Tone.start(); initSynths(); setToneReady(true); }
     setLives(3);
     setArmy([]);
     // Reset enemy counts
@@ -396,7 +400,7 @@ export default function KingsGambit() {
       setIntro("");
       startBeatLoop();
     }, 2000);
-  }, [toneReady, initLevel, startBeatLoop]);
+  }, [toneReady, initLevel, startBeatLoop, initSynths]);
 
   // Keyboard
   useEffect(() => {
